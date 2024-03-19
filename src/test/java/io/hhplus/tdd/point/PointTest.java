@@ -1,6 +1,5 @@
 package io.hhplus.tdd.point;
 
-import io.hhplus.tdd.TddApplication;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class PointControllerTest {
+class PointTest {
 
 	PointController pointController;
 
@@ -22,7 +21,7 @@ class PointControllerTest {
 
 	PointHistoryTable pointHistoryTable;
 
-	PointControllerTest() {
+	PointTest() {
 		this.userPointTable = new UserPointTable();
 		this.pointHistoryTable = new PointHistoryTable();
 		this.pointService = new PointService(userPointTable, pointHistoryTable);
