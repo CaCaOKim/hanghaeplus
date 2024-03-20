@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class PointTest {
+class PointControllerTest {
 
 	PointController pointController;
 
@@ -21,7 +21,7 @@ class PointTest {
 
 	PointHistoryTable pointHistoryTable;
 
-	PointTest() {
+	PointControllerTest() {
 		this.userPointTable = new UserPointTable();
 		this.pointHistoryTable = new PointHistoryTable();
 		this.pointService = new PointService(userPointTable, pointHistoryTable);
@@ -31,7 +31,7 @@ class PointTest {
 	long id = 1234;
 
 	@Test
-	void 성공_Controller() throws InterruptedException {
+	void 성공() throws InterruptedException {
 		// 포인트 충전
 		long amount = 300;
 
@@ -43,6 +43,7 @@ class PointTest {
 		// 포인트 조회
 		userPoint = pointController.point(id);
 
+		assertNotNull(userPoint, "포인트 조회");
 		assertEquals(userPoint.point(), amount, "포인트 조회");
 
 		// 포인트 사용
@@ -66,21 +67,15 @@ class PointTest {
 	}
 
 	@Test
-	void 포인트_잔액이_부족하여_포인트_사용_실패_Controller() throws InterruptedException {
+	void 포인트_잔액이_부족하여_포인트_사용_실패() throws InterruptedException {
 		// 포인트 충전
-		UserPoint userPoint = pointController.charge(id, 200);
+		long chargeAmount = 200;
+		UserPoint userPoint = pointController.charge(id, chargeAmount);
 
+		// 포인트 사용
+		long useAmount = 300;
 		assertThatThrownBy(() -> {
-			// 포인트 사용
-			pointController.use(userPoint.id(), 300);
+			pointController.use(userPoint.id(), useAmount);
 		}).isInstanceOf(RuntimeException.class);
 	}
-
-	@Test
-	void 포인트_잔액이_부족하여_포인트_사용_실패_Service() throws InterruptedException {
-		assertThatThrownBy(() -> {
-			long result = pointService.CalculateAmount(200, 300, TransactionType.USE);
-		}).isInstanceOf(RuntimeException.class);
-	}
-
 }

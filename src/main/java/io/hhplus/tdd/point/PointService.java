@@ -33,13 +33,20 @@ public class PointService {
 
     // 잔액 계산 -> Test가능하도록 따로 메쏘드 분리
     public long CalculateAmount(long point, long amount, TransactionType transactionType) {
+        long maxCharge = 1000;
+        long minUse = 50;
+
         long result = -1;
         if (transactionType == TransactionType.USE) {
+            if (minUse > amount) throw new RuntimeException("한번에 " + Long.toString(minUse) + "포인트부터 사용하실 수 있습니다.");
             result = point - amount;
         } else if (transactionType == TransactionType.CHARGE) {
             result = point + amount;
         }
-        if (result < 0) throw new RuntimeException();
+
+        if (maxCharge < result) throw new RuntimeException("최대 " + Long.toString(maxCharge) + "포인트까지만 보유 가능합니다.");
+        if (result < 0) throw new RuntimeException("포인트 잔액이 부족합니다.");
+
         return result;
     }
 
