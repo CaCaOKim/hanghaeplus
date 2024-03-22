@@ -2,10 +2,13 @@ package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class PointService {
@@ -52,13 +55,12 @@ public class PointService {
 
     // 잔액 업데이트
     public UserPoint insertOrUpdate(long id, long amount, TransactionType transactionType) throws InterruptedException {
-        UserPoint userPoint = userPointTable.selectById(id);
-        long point = CalculateAmount(userPoint.point(), amount, transactionType);
-        if (point >= 0) {
-            userPoint = userPointTable.insertOrUpdate(id, point);
-            pointHistoryTable.insert(id, amount, transactionType, System.currentTimeMillis());
-        }
+            UserPoint userPoint = userPointTable.selectById(id);
+            long point = CalculateAmount(userPoint.point(), amount, transactionType);
+            if (point >= 0) {
+                userPoint = userPointTable.insertOrUpdate(id, point);
+                pointHistoryTable.insert(id, amount, transactionType, System.currentTimeMillis());
+            }
         return userPoint;
     }
-
 }
